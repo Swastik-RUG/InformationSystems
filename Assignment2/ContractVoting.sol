@@ -20,8 +20,12 @@ contract CumulativeVoting {
     // Stores the contracts title or description or contract.
     string public contract_title;
     
+    bool private votingInProgress = false;
+    bool private electionResult = false;
+    
     // Creates a map object (addressOfShareHolder -> ShareHolder struct), to keep track of shareholders voting.
     mapping(address => ShareHolder) private ShareHolders;
+    address[] private addressLookupTable;
     
     // Stores the total number for votes cast in the ballot.
     uint private totalVotes = 0;
@@ -35,6 +39,11 @@ contract CumulativeVoting {
     modifier directorOnly() {
         // Assert/require before executing the body _;
         require(msg.sender == director);
+        _;
+    }
+    
+    modifier isVotingInProgress() {
+        require(votingInProgress == true);
         _;
     }
     
@@ -53,6 +62,9 @@ contract CumulativeVoting {
     function createContract(string memory _name) directorOnly public {
        /* Set the contract's Title/Description */
         contract_title = _name;
+        votingInProgress = true;
+        votesInFavour = 0;
+        totalVotes = 0;
     }
     
     /*
@@ -62,6 +74,7 @@ contract CumulativeVoting {
     function authorizeShareHolder(address _shareholder) directorOnly public {
         /* Set the authorized boolean flag for the shareholder as true */
         ShareHolders[_shareholder].authorized = true;
+        addressLookupTable.push(_shareholder);
     }
     
     /*
@@ -76,12 +89,27 @@ contract CumulativeVoting {
     /*
     * Close the voting activity on the Contract.
     */
-    function closeVoting() directorOnly public view returns(string memory) {
+    function VotingResults() public view returns(string memory) {
         /* Check if votes in favour of contract is greater than 50% of the total votes */
-        if(votesInFavour > totalVotes/2)
-            return "Majority: Agree";
-        else
-            return "Majority: Disagree";
+        if(!votingInProgress) {
+            if(electionResult)
+                return "Majority: Agree";
+            else
+                return "Majority: Disagree";
+        } else return "Voting is still in progress: end the voting";
+    }
+    
+    /*
+    * Function to stop the voting process. Any votes cast after the invocation of this function will be ignored.
+    */
+    function endVoting() directorOnly public {
+        electionResult = votesInFavour > totalVotes/2;
+        votingInProgress = false;
+        contract_title = "--Create a new Contract to begin Voting--";
+        for (uint i=0; i< addressLookupTable.length ; i++) {
+            ShareHolders[addressLookupTable[i]].voted = false;
+            ShareHolders[addressLookupTable[i]].vote = 0;
+        }
     }
     
     /*
@@ -89,17 +117,21 @@ contract CumulativeVoting {
     */
     function votingStatus() directorOnly public view returns (string memory) {
         /* Check if votes in favour of contract is greater than 50% of the total votes */
-        if(votesInFavour > totalVotes/2)
-            return "Voting is currently In Favour of the Contract";
+        if(votingInProgress) {
+            if(votesInFavour > totalVotes/2)
+                return "Voting is currently In Favour of the Contract";
+            else
+                return "Voting is currently Not In Favour of the Contract";
+        }
         else
-            return "Voting is currently Not In Favour of the Contract";
+            return "No Active Contracts being voted: Voting ended! use VotingResults";
     }
     
     /*
     * Function that allows the ShareHolders to cast their vote.
     * @_voteStatus -> A boolean value 0/1 that can be cast by the shareholders; 0 -> Disagree, 1 -> Agree.
     */
-    function vote(uint _voteStatus) public {
+    function vote(uint _voteStatus) public isVotingInProgress {
         
         /* Check if the ShareHolder casting the vote has already voted */
         require(!ShareHolders[msg.sender].voted);
