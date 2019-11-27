@@ -1,6 +1,6 @@
 pragma solidity >=0.4.22 <0.6.0;
 
-contract voteSim {
+contract CumulativeVoting {
     
     struct ShareHolder {
         bool authorized;
@@ -12,8 +12,8 @@ contract voteSim {
     string public contract_title;
     
     mapping(address => ShareHolder) private ShareHolders;
-    uint private votes =0;
-    uint private poll =0;
+    uint private totalVotes =0;
+    uint private votesInFavour =0;
 
     modifier directorOnly() {
         // Assert before executing the body _;
@@ -35,14 +35,14 @@ contract voteSim {
     }
     
     function closeVoting() directorOnly public view returns(string memory) {
-        if(poll > votes/2)
+        if(votesInFavour > totalVotes/2)
             return "Majority: Agree";
         else
             return "Majority: Disagree";
     }
     
     function votingStatus() directorOnly public view returns (string memory) {
-        if(poll > votes/2)
+        if(votesInFavour > totalVotes/2)
             return "Voting is currently In Favour of the Contract";
         else
             return "Voting is currently Not In Favour of the Contract";
@@ -55,8 +55,8 @@ contract voteSim {
         
         ShareHolders[msg.sender].vote = _voteStatus;
         ShareHolders[msg.sender].voted = true;
-        votes += 1;
-        poll += _voteStatus;
+        totalVotes += 1;
+        votesInFavour += _voteStatus;
     }
     
     function terminate() directorOnly public {
