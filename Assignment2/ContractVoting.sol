@@ -17,8 +17,8 @@ contract CumulativeVoting {
     // Stores the directors address.
     address private director;
     
-    // Stores the contracts title or description or contract.
-    string public contract_title;
+    // Stores the Question's title or description.
+    string public Question;
     
     bool private votingInProgress = false;
     bool private electionResult = false;
@@ -30,7 +30,7 @@ contract CumulativeVoting {
     // Stores the total number for votes cast in the ballot.
     uint private totalVotes = 0;
     
-    // Stores the total number of votes in favour of the contract proposed.
+    // Stores the total number of votes in favour of the Question proposed.
     uint private votesInFavour = 0;
     
     /*
@@ -56,12 +56,12 @@ contract CumulativeVoting {
     }
     
     /*
-    * Create a new Contract.
-    * @_name -> Title/Description of the Contract.
+    * Create a new Question.
+    * @_name -> Title/Description of the Question.
     */
-    function createContract(string memory _name) directorOnly public {
-       /* Set the contract's Title/Description */
-        contract_title = _name;
+    function createQuestion(string memory _name) directorOnly public {
+       /* Set the Question's Title/Description */
+        Question = _name;
         votingInProgress = true;
         votesInFavour = 0;
         totalVotes = 0;
@@ -87,10 +87,10 @@ contract CumulativeVoting {
     }
     
     /*
-    * Close the voting activity on the Contract.
+    * Close the voting activity on the Question.
     */
     function VotingResults() public view returns(string memory) {
-        /* Check if votes in favour of contract is greater than 50% of the total votes */
+        /* Check if votes in favour of Question is greater than 50% of the total votes */
         if(!votingInProgress) {
             if(electionResult)
                 return "Majority: Agree";
@@ -105,7 +105,7 @@ contract CumulativeVoting {
     function endVoting() directorOnly public {
         electionResult = votesInFavour > totalVotes/2;
         votingInProgress = false;
-        contract_title = "--Create a new Contract to begin Voting--";
+        Question = "--Create a new Question to begin Voting--";
         for (uint i=0; i< addressLookupTable.length ; i++) {
             ShareHolders[addressLookupTable[i]].voted = false;
             ShareHolders[addressLookupTable[i]].vote = 0;
@@ -113,18 +113,18 @@ contract CumulativeVoting {
     }
     
     /*
-    * View the status of voting activity on the Contract.
+    * View the status of voting activity on the Question.
     */
     function votingStatus() directorOnly public view returns (string memory) {
-        /* Check if votes in favour of contract is greater than 50% of the total votes */
+        /* Check if votes in favour of Question is greater than 50% of the total votes */
         if(votingInProgress) {
             if(votesInFavour > totalVotes/2)
-                return "Voting is currently In Favour of the Contract";
+                return "Voting is currently In Favour of the Question";
             else
-                return "Voting is currently Not In Favour of the Contract";
+                return "Voting is currently Not In Favour of the Question";
         }
         else
-            return "No Active Contracts being voted: Voting ended! use VotingResults";
+            return "No Active Questions being voted: Voting ended! use VotingResults";
     }
     
     /*
@@ -149,8 +149,8 @@ contract CumulativeVoting {
         ShareHolders[msg.sender].voted = true;
         
         /*
-        * @totalVotes -> Toatal number of votes casted in the ballot.
-        * @votesInFavour -> Total number of votes in favour of the Contract.
+        * @totalVotes -> Total number of votes casted in the ballot.
+        * @votesInFavour -> Total number of votes in favour of the Question.
         */
         totalVotes += 1;
         votesInFavour += _voteStatus;
