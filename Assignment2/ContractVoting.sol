@@ -6,12 +6,10 @@ contract CumulativeVoting {
     * A structure to hold ShareHolders vote status and his voting rights (authorized)
     * @authorized -> A boolean flag indicating if a ShareHolder is allowed to vote or Not
     * @voted -> A boolean flag indicating if the ShareHolder has already voted.
-    * @vote -> An integer variable that indicated the vote placed by the ShareHolder this is either 0 or 1.
     */
     struct ShareHolder {
         bool authorized;
         bool voted;
-        uint vote;
     }
     
     // Stores the directors address.
@@ -108,7 +106,6 @@ contract CumulativeVoting {
         Question = "--Create a new Question to begin Voting--";
         for (uint i=0; i< addressLookupTable.length ; i++) {
             ShareHolders[addressLookupTable[i]].voted = false;
-            ShareHolders[addressLookupTable[i]].vote = 0;
         }
     }
     
@@ -142,8 +139,6 @@ contract CumulativeVoting {
         /* Check if the vote casted by the ShareHolder is a valid binary (0|1) */
         require(_voteStatus == 0 || _voteStatus == 1);
         
-        /* Record the vote casted by the ShareHolder */
-        ShareHolders[msg.sender].vote = _voteStatus;
         
         /* Flip the voted flag of the ShareHolder to block them from casting a duplicate vote */
         ShareHolders[msg.sender].voted = true;
