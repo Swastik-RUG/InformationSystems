@@ -179,7 +179,7 @@ class KDTree:
 		"""
 		if "elements" in self.storage[sidx.storage()]:
 			return self.storage[sidx.storage()]["elements"]
-	
+
 		else:
 			axis = self.storage[sidx.storage()]["axis"]
 			partition = self.storage[sidx.storage()]["partition"]
@@ -194,6 +194,7 @@ class KDTree:
 		return boxes
 		
 	def closest(self, point, sidx = si.StorageIndex()):
+		point
 		"""
 		Returns a list of unique keys that fell within the BoundingBox that 
 		contained the point.
@@ -205,7 +206,21 @@ class KDTree:
 
 		:To be implemented by the student:	
 		"""
-		raise NotImplementedError(":To be implemented by the student:")					
+		if "elements" in self.storage[sidx.storage()]:
+			return self.storage[sidx.storage()]["elements"]
+
+		else:
+			axis = self.storage[sidx.storage()]["axis"]
+			partition = self.storage[sidx.storage()]["partition"]
+			lr = ((axis==0 and point[0] <= partition) or (axis == 1 and point[1]<=partition), (axis==0 and point[0] > partition) or (axis == 1 and point[1] > partition))
+			boxes = []
+			if lr[0]:
+				boxes.extend(self.closest(point, sidx.left()))
+			if lr[1]:
+				boxes.extend(self.closest(point, sidx.right()))
+
+		return boxes
+		raise NotImplementedError(":To be implemented by the student:")
 		
 
 	
