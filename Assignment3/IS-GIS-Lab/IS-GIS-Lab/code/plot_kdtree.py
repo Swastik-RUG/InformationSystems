@@ -13,7 +13,7 @@ import numpy as np
 
 # lab
 import quadtree as qt
-
+from quadtree import QuadTree
 from matplotlib.collections import PatchCollection
 
 
@@ -65,26 +65,34 @@ if __name__ == '__main__':
 
 		# Step 1 query and fetch		
 		closest_query = np.fromstring(args.closest,dtype=float, sep=' ')
-		closest_records = dtb.query(tree.closest(closest_query))
+		query = dtb.query(tree.closest(closest_query))
 
 		# Step 2 compare found geometry with closest_point	
-		geometries= [ [x[field_idx["x"]],x[field_idx["y"]] ] for x in closest_records]
+		geometries= [[x[field_idx["x"]],x[field_idx["y"]] ] for x in query]
 		distances = [np.linalg.norm(closest_query - geom) for geom in geometries]
 		ordered = np.argsort(distances)
 		
 		# Step 3 plot search and result point
-		plotter.add_closest_query(closest_query,geometries[ordered[0]])		
+		plotter.add_closest_query(closest_query,geometries[ordered[0]])
 
 	
 	# Using the QuadTree depth to subsample the KDTree		
 	if args.quadtree:
-	# :To be implemented by the student:
-		raise NotImplementedError(":To be implemented by the student:")		
+		if args.quadlevel:
+			for rec in dtb.db:
+				dtb.update_field(rec, "quad", args.quadlevel)
+
+			for level in reversed(range(quadtree.depth-1)):
+				for bb in quadtree.quads[level]:
+					centroid = bb.centroid()
+					query = dtb.query(tree.closest(centroid))
+					geometries = [[x[1], x[2]] for x in query]
+					distances = [np.linalg.norm(np.asarray(centroid) - geom) for geom in geometries]
+					ordered_dist = np.argsort(distances)
+					closest_point = ordered_dist[0]
+					dtb.update_field(query[closest_point][0], "quad", level)
 
 	plotter.plot()
-
-	
-
 
 
 
