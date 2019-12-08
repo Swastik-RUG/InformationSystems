@@ -37,16 +37,15 @@ class QuadTree:
         if depth >= self.depth:
             return
         print(depth)
-        height = _bbox.height()
-        width = _bbox.width()
+        centroid = _bbox.centroid()
         minx = _bbox.data[0, 0]
         maxx = _bbox.data[0, 1]
         miny = _bbox.data[1, 0]
         maxy = _bbox.data[1, 1]
-        nw = bb.BoundingBox(minx, minx + (width / 2), miny, miny + (height / 2))
-        ne = bb.BoundingBox(minx + (width / 2), maxx, miny, miny + (height / 2))
-        sw = bb.BoundingBox(minx, minx + (width / 2), miny + (height / 2), maxy)
-        se = bb.BoundingBox(minx + (width / 2), maxx, miny + (height / 2), maxy)
+        nw = bb.BoundingBox(minx, centroid[0], miny, centroid[1])
+        ne = bb.BoundingBox(centroid[0], maxx, miny, centroid[1])
+        sw = bb.BoundingBox(minx, centroid[0], centroid[1], maxy)
+        se = bb.BoundingBox(centroid[0], maxx, centroid[1], maxy)
         self.quads[depth] += [nw]
         self.quads[depth] += [ne]
         self.quads[depth] += [sw]
