@@ -75,22 +75,34 @@ if __name__ == '__main__':
 		# Step 3 plot search and result point
 		plotter.add_closest_query(closest_query,geometries[ordered[0]])
 
-	
-	# Using the QuadTree depth to subsample the KDTree		
-	if args.quadtree:
-		if args.quadlevel:
+	# Using the QuadTree depth to subsample the KDTree
+	if args.quadtree:  # Check if quadtree parameter is supplied
+		if args.quadlevel:  # Check if quadlevel parameter is supplied
+			# Set the quad field for all the records in the database to max quad-level
 			for rec in dtb.db:
 				dtb.update_field(rec, "quad", args.quadlevel)
 
-			for level in reversed(range(quadtree.depth-1)):
-				for bb in quadtree.quads[level]:
-					centroid = bb.centroid()
-					query = dtb.query(tree.closest(centroid))
-					geometries = [[x[1], x[2]] for x in query]
-					distances = [np.linalg.norm(np.asarray(centroid) - geom) for geom in geometries]
-					ordered_dist = np.argsort(distances)
-					closest_point = ordered_dist[0]
-					dtb.update_field(query[closest_point][0], "quad", level)
+		"""
+        Iterate the Quad tree from maximum depth to minimum.
+        For each BoundingBox in the Quad perform the following,
+            centroid -> calculate the centroid of the BoundingBox
+            tree.closes -> invoke KDtree to traverse the tree to get the closest datapoint for            the given centroid (section 3).
+            query -> Get the X and Y coordinates of the closest point from the database
+                     (databse: stores a structure like, 'Key, X, Y').
+            geometrics -> Get the X and Y coordinates from all the datpoint fetched from the           closest leafnode.
+            distances -> Compute the distances between the centroid and the datapoints.
+            closest_point -> Sort aesc the distances and fetch the datapoint closest to centroid.
+            dtb.updatefield(...) -> Update the quad field of the record to the current level.
+        """
+		for level in reversed(range(quadtree.depth - 1)):
+			for bb in quadtree.quads[level]:
+				centroid = bb.centroid()
+				query = dtb.query(tree.closest(centroid))
+				geometries = [[x[1], x[2]] for x in query]
+				distances = [np.linalg.norm(np.asarray(centroid) - geom) for geom in geometries]
+				ordered_dist = np.argsort(distances)
+				closest_point = ordered_dist[0]
+				dtb.update_field(query[closest_point][0], "quad", level)
 
 	plotter.plot()
 

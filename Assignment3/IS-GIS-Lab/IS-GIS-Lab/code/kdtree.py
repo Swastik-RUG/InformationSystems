@@ -192,35 +192,49 @@ class KDTree:
 				boxes.extend(self.rquery(bbox,sidx.right()))
 
 		return boxes
-		
-	def closest(self, point, sidx = si.StorageIndex()):
-		point
-		"""
-		Returns a list of unique keys that fell within the BoundingBox that 
-		contained the point.
-		
-		:param point: the point of interest
-		
-		>>> print(tree.closest([7,2]))	
-		<<< [5 6]	
 
-		:To be implemented by the student:	
+	def closest(self, point, sidx=si.StorageIndex()):
 		"""
+		Returns a list of unique keys that fell within the BoundingBox that
+		contained the point.
+
+		:param point: the point of interest
+		"""
+
+		# When the condition is satisfied the recurssion is stopped.
 		if "elements" in self.storage[sidx.storage()]:
 			return self.storage[sidx.storage()]["elements"]
 
 		else:
+			"""
+             Get the axis and the partition number
+             Axis - is the orientations, like x-axis (0) or y-axis (1)
+             Partition - is the element where the KDTree was split or partitioned.
+            """
 			axis = self.storage[sidx.storage()]["axis"]
 			partition = self.storage[sidx.storage()]["partition"]
-			lr = ((axis==0 and point[0] <= partition) or (axis == 1 and point[1]<=partition), (axis==0 and point[0] > partition) or (axis == 1 and point[1] > partition))
+
+			"""
+			traversal_direction - determines the direction of traversal (Left/Right).
+			    If the point is less than or equal to the partition value traverse left
+			    else traverse right.
+			    The axis == 0 or axis == 1 ensure that we are comparing the partition value against either x or y respectively.
+			"""
+			traversal_direction = (point[axis] <= partition, point[axis] > partition)
+
+			"""
+			Perform recursion until closest leaf node is reached.
+			Store the data points in that leaf node in boxes and return the boxes.
+			"""
 			boxes = []
-			if lr[0]:
+			if traversal_direction[0]:
+				# Recursion/Traverse towards left child
 				boxes.extend(self.closest(point, sidx.left()))
-			if lr[1]:
+			if traversal_direction[1]:
+				# Recursion/Traverse towards right child
 				boxes.extend(self.closest(point, sidx.right()))
 
 		return boxes
-		raise NotImplementedError(":To be implemented by the student:")
 		
 
 	

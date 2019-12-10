@@ -34,9 +34,17 @@ class QuadTree:
 
     def recurse(self, _bbox, depth):
 
+        # Stop the recursion when the below condition is satisfied
         if depth >= self.depth:
             return
-        print(depth)
+        """
+        centroid - Calculate the centroid of the BoundingBox
+        minx -  minimum x of the bounding box
+        maxx -  maximum x of the bounding box
+        miny -  minimum y of the bounding box
+        maxy -  maximum y of the bounding box
+        nw, ne, sw, se - The points that form the four BoundingBoxes
+        """
         centroid = _bbox.centroid()
         minx = _bbox.data[0, 0]
         maxx = _bbox.data[0, 1]
@@ -46,12 +54,14 @@ class QuadTree:
         ne = bb.BoundingBox(centroid[0], maxx, miny, centroid[1])
         sw = bb.BoundingBox(minx, centroid[0], centroid[1], maxy)
         se = bb.BoundingBox(centroid[0], maxx, centroid[1], maxy)
+        # The bounding boxes created are added to the quads map, with the parameter depth used as key
         self.quads[depth] += [nw]
         self.quads[depth] += [ne]
         self.quads[depth] += [sw]
         self.quads[depth] += [se]
 
         depth = depth + 1
+        # each of the resulting bounding boxes are sent as parameters to the recursion function.
         self.recurse(nw, depth)
         self.recurse(ne, depth)
         self.recurse(sw, depth)
