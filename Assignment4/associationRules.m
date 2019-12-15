@@ -6,9 +6,9 @@
 % input parameters: minsup = minimum support, minconf = minimum confidence
 function associationRules(minsup,minconf)
 shoppingList = readDataFile;
-
 ntrans = size(shoppingList,1);
 items = unique([shoppingList{:}]);
+plotHistogram(shoppingList, items);
 nitems = numel(items);
 
 [tridx,trlbl] = grp2idx(items);
