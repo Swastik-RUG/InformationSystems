@@ -8,7 +8,7 @@ function associationRules(minsup,minconf)
 shoppingList = readDataFile;
 ntrans = size(shoppingList,1);
 items = unique([shoppingList{:}]);
-plotHistogram(shoppingList);
+plotHistogram(shoppingList, items);
 nitems = numel(items);
 
 [tridx,trlbl] = grp2idx(items);
@@ -86,24 +86,7 @@ for i=size(fi,2)-1:-1:1
         end
     end
 end
-    show_top_30(confidenceList, dataset)
+    
 end
 
-function show_top_30(confidenceList, db)
-fid = fopen('myDataFile.csv');
-a = textscan(fid,'%s',1);
-fclose(fid);
-header = split(a{1},',');
-sortedRes = sortrows(confidenceList,3,'descend')
-toDisp =sortedRes(1:30,:);
-for i=1:size(toDisp,1)
-    c1 = toDisp(i,1);
-    c2 = toDisp(i,2);
-    c3 = toDisp(i,3);
-    a = num2str(reshape(c1{1}', 1, []));
-    b = num2str(reshape(c2{1}', 1, []));
-    ax = c3{1};
-    fprintf("%s => %s Confidence = %f \n", a, b, ""+ax)
-end
-end
-
+function displayTop30(cand
