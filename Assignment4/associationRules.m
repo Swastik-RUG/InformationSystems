@@ -59,17 +59,24 @@ end
 function generateAssociation(fi, sup, minconf)
 
 confidenceList = {};
+pruneList = [];
 for i=size(fi,2)-1:-1:1
     tmpfi = fi(i);
     tmpfi = tmpfi{1};
     supersetSize = size(tmpfi,2);
     for k =1:size(tmpfi,1)
         row = tmpfi(k,:);
+        pruneList = [];
         for j=supersetSize-1:-1:1
-            subsets = nchoosek(row,j);
+            subsets = sortrows(nchoosek(row,j));
+            if  isempty(pruneList) isSubset = []; else isSubset = ismember(subsets(:,j), pruneList(size(pruneList,2)-j)); end
+            %out=subsets;
+            subsets(any(isSubset==1,2),:) = [];
             for x =1:size(subsets,1)
-                subset = subsets(x);
-                X_S = setdiff(row,subset);
+                %subset = subsets(x);
+                %subset
+                %X_S = setdiff(row,subset);
+                X_S = subsets(x,:);
                 S = row;
                 fi_s = fi{size(S,2)};
                 s_idx = find(ismember(fi_s, sort(S), 'rows'));
@@ -78,32 +85,39 @@ for i=size(fi,2)-1:-1:1
                 fi_X_S = fi{size(X_S,2)};
                 X_S_idx = find(ismember(fi_X_S, sort(X_S), 'rows'));
                 support_X_S = sup{size(X_S,2)}(X_S_idx);
-                confidence = support_S/support_X_S;
+                confidence = round(support_S/support_X_S,2);
                 if confidence >= minconf
-                    confidenceList = [confidenceList;[{X_S}, {subset}, {confidence}]];
+                    confidenceList = [confidenceList;[{X_S}, {size(X_S,2)} {setdiff(row,X_S)}, {confidence}]];
+                else
+                    d = setdiff(row,subsets(x,:));
+                    d(end+1:6)=0;
+                    pruneList = [pruneList; sortrows(d) ];
                 end
             end
         end
     end
 end
-    show_top_30(confidenceList, dataset)
+show_top_30(confidenceList, dataset)
+
 end
 
 function show_top_30(confidenceList, db)
-fid = fopen('myDataFile.csv');
-a = textscan(fid,'%s',1);
-fclose(fid);
-header = split(a{1},',');
-sortedRes = sortrows(confidenceList,3,'descend')
-toDisp =sortedRes(1:30,:);
-for i=1:size(toDisp,1)
-    c1 = toDisp(i,1);
-    c2 = toDisp(i,2);
-    c3 = toDisp(i,3);
-    a = num2str(reshape(c1{1}', 1, []));
-    b = num2str(reshape(c2{1}', 1, []));
-    ax = c3{1};
-    fprintf("%s => %s Confidence = %f \n", a, b, ""+ax)
-end
+    fid = fopen('myDataFile.csv');
+    a = textscan(fid,'%s',1);
+    fclose(fid);
+    header = split(a{1},',');
+    sortedRes = sortrows(confidenceList,4,'descend');
+    toDisp =sortedRes(1:30,:);
+    for i=1:size(toDisp,1)
+        c1 = toDisp(i,1);
+        c1 = arrayfun(@(x) header(x),c1{1});
+        c2 = toDisp(i,2);
+        c2 = arrayfun(@(x) header(x),c2{1});
+        c3 = toDisp(i,4);
+        a = strjoin(c1);
+        b = strjoin(c2);
+        ax = c3{1};
+        fprintf("%s => %s Confidence = %f \n", a, b, ""+ax)
+    end
 end
 
