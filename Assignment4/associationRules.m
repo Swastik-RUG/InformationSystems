@@ -123,4 +123,8 @@ function show_top_30(associationRules)
         % Print the association Rule
         fprintf("{%s} => {%s} ::: Confidence = %s \n", antecedent(1:end-1), consequent(1:end-1), ""+confidence)
     end
+    fprintf("-----------------------------------------------------------------------------------------------\n");
+    fprintf("The Number of Association that satisfy the input constrints is = %d\n", size(associationRules,1));
+    fprintf("-----------------------------------------------------------------------------------------------\n");
+
 end
