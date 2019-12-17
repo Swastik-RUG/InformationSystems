@@ -1,1 +1,0 @@
-associationRules(0.001,0.8)
