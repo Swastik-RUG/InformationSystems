@@ -1,0 +1,35 @@
+>> associationRulesAntinMonotone(0.001, 0.8)
+Elapsed time is 20.027905 seconds.
+{ oil, other_vegetables, root_vegetables, tropical_fruit, yogurt} => { whole_milk} ::: Confidence =  1.000000 
+{ bottled_water, other_vegetables, pip_fruit, root_vegetables} => { whole_milk} ::: Confidence =  1.000000 
+{ butter, domestic_eggs, other_vegetables, whipped_sour_cream} => { whole_milk} ::: Confidence =  1.000000 
+{ butter, fruit_vegetable_juice, tropical_fruit, whipped_sour_cream} => { other_vegetables} ::: Confidence =  1.000000 
+{ butter, other_vegetables, pork, whipped_sour_cream} => { whole_milk} ::: Confidence =  1.000000 
+{ butter, other_vegetables, root_vegetables, white_bread} => { whole_milk} ::: Confidence =  1.000000 
+{ citrus_fruit, root_vegetables, tropical_fruit, whipped_sour_cream} => { other_vegetables} ::: Confidence =  1.000000 
+{ citrus_fruit, pastry, rolls_buns, whipped_sour_cream} => { whole_milk} ::: Confidence =  1.000000 
+{ grapes, tropical_fruit, whole_milk, yogurt} => { other_vegetables} ::: Confidence =  1.000000 
+{ ham, pip_fruit, tropical_fruit, whole_milk} => { other_vegetables} ::: Confidence =  1.000000 
+{ ham, pip_fruit, tropical_fruit, yogurt} => { other_vegetables} ::: Confidence =  1.000000 
+{ newspapers, rolls_buns, soda, whole_milk} => { other_vegetables} ::: Confidence =  1.000000 
+{ oil, other_vegetables, root_vegetables, yogurt} => { whole_milk} ::: Confidence =  1.000000 
+{ oil, root_vegetables, tropical_fruit, yogurt} => { whole_milk} ::: Confidence =  1.000000 
+{ rolls_buns, root_vegetables, sausage, tropical_fruit} => { whole_milk} ::: Confidence =  1.000000 
+{ brown_bread, pip_fruit, whipped_sour_cream} => { other_vegetables} ::: Confidence =  1.000000 
+{ butter, domestic_eggs, soft_cheese} => { whole_milk} ::: Confidence =  1.000000 
+{ butter, hygiene_articles, pip_fruit} => { whole_milk} ::: Confidence =  1.000000 
+{ butter, rice, root_vegetables} => { whole_milk} ::: Confidence =  1.000000 
+{ citrus_fruit, root_vegetables, soft_cheese} => { other_vegetables} ::: Confidence =  1.000000 
+{ cream_cheese_, domestic_eggs, napkins} => { whole_milk} ::: Confidence =  1.000000 
+{ cream_cheese_, domestic_eggs, sugar} => { whole_milk} ::: Confidence =  1.000000 
+{ curd, domestic_eggs, sugar} => { whole_milk} ::: Confidence =  1.000000 
+{ flour, root_vegetables, whipped_sour_cream} => { whole_milk} ::: Confidence =  1.000000 
+{ hygiene_articles, pip_fruit, root_vegetables} => { whole_milk} ::: Confidence =  1.000000 
+{ hygiene_articles, root_vegetables, whipped_sour_cream} => { whole_milk} ::: Confidence =  1.000000 
+{ canned_fish, hygiene_articles} => { whole_milk} ::: Confidence =  1.000000 
+{ rice, sugar} => { whole_milk} ::: Confidence =  1.000000 
+{ root_vegetables, sausage, tropical_fruit, yogurt} => { whole_milk} ::: Confidence =  0.940000 
+{ cream_cheese_, other_vegetables, sugar} => { whole_milk} ::: Confidence =  0.940000 
+-----------------------------------------------------------------------------------------------
+The Number of Association that satisfy the input constrints is = 413
+-----------------------------------------------------------------------------------------------
