@@ -66,8 +66,11 @@ for i=size(frequentItems,2)-1:-1:2
     for k =1:size(frequentItems{1,i},1)
         row = frequentItems{1,i}(k,:);
         support_nume = support{1, size(row, 2)}(k);
+        pruneList = [];
         for j=length(row)-1:-1:1
             subsets = nchoosek(row,j);
+            if  isempty(pruneList) isSubset = []; else isSubset = ismember(subsets, pruneList{1}); end
+            subsets(all(isSubset==1,2),:) = [];
             for x =1:size(subsets,1)
                 X_S = subsets(x,:);
                 fi_X_S = frequentItems{size(X_S,2)};
@@ -75,6 +78,8 @@ for i=size(frequentItems,2)-1:-1:2
                 confidence = round(support_nume/support_X_S,2);
                 if confidence >= minconf
                     confidenceList = [confidenceList;[{X_S}, {size(X_S,2)} {setdiff(row,X_S)}, {confidence}]];
+                else
+                    pruneList{end+1,1} = X_S;
                 end
             end
         end
