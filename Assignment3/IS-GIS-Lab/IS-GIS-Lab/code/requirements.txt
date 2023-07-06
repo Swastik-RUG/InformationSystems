@@ -1,4 +1,4 @@
 wheel
 matplotlib==2.2.3
-scipy==1.2.1
+scipy==1.10.0
 pygdal==2.4.0.5
